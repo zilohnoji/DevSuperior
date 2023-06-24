@@ -23,7 +23,7 @@ public class User {
     private String email;
 
     @Column(nullable = false, length = 20, unique = true)
-    private String cellphone;
+    private String phone;
 
     @Column(nullable = false, length = 20, unique = false)
     private LocalDate birthDate;
@@ -39,12 +39,12 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, String email, String cellphone, LocalDate birthDate,
+    public User(Long id, String name, String email, String phone, LocalDate birthDate,
                 String password, String[] roles) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.cellphone = cellphone;
+        this.phone = phone;
         this.birthDate = birthDate;
         this.password = password;
         this.roles = roles;
@@ -78,12 +78,12 @@ public class User {
         this.email = email;
     }
 
-    public String getCellphone() {
-        return cellphone;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setCellphone(String cellphone) {
-        this.cellphone = cellphone;
+    public void setPhone(String cellphone) {
+        this.phone = phone;
     }
 
     public LocalDate getBirthDate() {
@@ -116,14 +116,14 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return Objects.equals(id, user.id) && Objects.equals(name, user.name) &&
-                Objects.equals(email, user.email) && Objects.equals(cellphone, user.cellphone) &&
+                Objects.equals(email, user.email) && Objects.equals(phone, user.phone) &&
                 Objects.equals(birthDate, user.birthDate) && Objects.equals(password, user.password)
                 && Arrays.equals(roles, user.roles);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, name, email, cellphone, birthDate, password);
+        int result = Objects.hash(id, name, email, phone, birthDate, password);
         result = 31 * result + Arrays.hashCode(roles);
         return result;
     }
@@ -134,7 +134,7 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", cellphone='" + cellphone + '\'' +
+                ", cellphone='" + phone + '\'' +
                 ", birthDate=" + birthDate +
                 ", password='" + password + '\'' +
                 ", roles=" + Arrays.toString(roles) +
