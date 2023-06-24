@@ -3,7 +3,6 @@ package com.donatoordep.dscommerce.entities;
 import jakarta.persistence.*;
 
 import java.time.Instant;
-import java.util.Enumeration;
 import java.util.Objects;
 
 @Entity
@@ -23,6 +22,17 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private Payment payment;
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
 
     public Order() {
     }
