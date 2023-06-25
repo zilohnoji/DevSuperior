@@ -1,19 +1,19 @@
 package com.donatoordep.dscommerce.services;
 
 import com.donatoordep.dscommerce.dto.ProductDTO;
-import com.donatoordep.dscommerce.entities.Product;
 import com.donatoordep.dscommerce.mapper.ProductMapper;
 import com.donatoordep.dscommerce.repositories.ProductRepository;
+import com.donatoordep.dscommerce.services.exceptions.DatabaseViolationReferentialException;
+import com.donatoordep.dscommerce.services.exceptions.NotFoundResourceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-
 public class ProductService {
 
     @Autowired
@@ -24,7 +24,8 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
-        return repository.findById(id).map(ProductDTO::new).get();
+        return repository.findById(id).map(ProductDTO::new)
+                .orElseThrow(NotFoundResourceException::new);
     }
 
     @Transactional(readOnly = true)
@@ -39,9 +40,23 @@ public class ProductService {
 
     @Transactional(readOnly = false)
     public ProductDTO update(Long id, ProductDTO dto) {
-        return (repository.getReferenceById(id)).getId().equals(dto.getId())
-                ? mapper.toDto(repository.save(mapper.toEntity(dto))) : null;
+        if (repository.getReferenceById(id).getId().equals(dto.getId())) {
+            return mapper.toDto(repository.save(mapper.toEntity(dto)));
+        } else {
+            throw new NotFoundResourceException();
+        }
     }
 
-
+    @Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundResourceException();
+        } else {
+            try {
+                repository.deleteById(id);
+            } catch (DataIntegrityViolationException e){
+                throw new DatabaseViolationReferentialException();
+            }
+        }
+    }
 }
