@@ -1,6 +1,8 @@
 package com.donatoordep.dscommerce.services;
 
 import com.donatoordep.dscommerce.dto.ProductDTO;
+import com.donatoordep.dscommerce.entities.Product;
+import com.donatoordep.dscommerce.mapper.ProductMapper;
 import com.donatoordep.dscommerce.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,9 @@ public class ProductService {
     @Autowired
     private ProductRepository repository;
 
+    @Autowired
+    private ProductMapper mapper;
+
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id){
         return repository.findById(id).map(ProductDTO::new).get();
@@ -25,5 +30,11 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAll(Pageable pageable) {
         return repository.findAll(pageable).map(ProductDTO::new);
+    }
+
+    @Transactional(readOnly = false)
+    public ProductDTO insert(ProductDTO dto) {
+        return mapper.toDto(repository.save(new Product(dto.getName(), dto.getDescription(),
+                dto.getPrice(), dto.getImgUrl())));
     }
 }
