@@ -23,7 +23,7 @@ public class ProductService {
     private ProductMapper mapper;
 
     @Transactional(readOnly = true)
-    public ProductDTO findById(Long id){
+    public ProductDTO findById(Long id) {
         return repository.findById(id).map(ProductDTO::new).get();
     }
 
@@ -34,7 +34,14 @@ public class ProductService {
 
     @Transactional(readOnly = false)
     public ProductDTO insert(ProductDTO dto) {
-        return mapper.toDto(repository.save(new Product(dto.getName(), dto.getDescription(),
-                dto.getPrice(), dto.getImgUrl())));
+        return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
+
+    @Transactional(readOnly = false)
+    public ProductDTO update(Long id, ProductDTO dto) {
+        return (repository.getReferenceById(id)).getId().equals(dto.getId())
+                ? mapper.toDto(repository.save(mapper.toEntity(dto))) : null;
+    }
+
+
 }
