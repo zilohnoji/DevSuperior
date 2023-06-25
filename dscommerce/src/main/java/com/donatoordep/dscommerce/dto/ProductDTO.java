@@ -1,23 +1,31 @@
 package com.donatoordep.dscommerce.dto;
 
 import com.donatoordep.dscommerce.entities.Product;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
 public class ProductDTO {
 
     private Long id;
+
+    @NotNull(message = "Parameter not null")
+    @Size(max = 80, message = "Max size is 80")
+    @NotBlank(message = "Parameter required")
     private String name;
+
+    @Size(min = 10, message = "Minimum size is 10")
+    @NotBlank(message = "Parameter required")
     private String description;
+
+    @Positive(message = "Put a positive value")
     private Double price;
     private String imgUrl;
 
-    public ProductDTO(Long id, String name, String description, Double price, String imgUrl) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.imgUrl = imgUrl;
+    public ProductDTO(){
     }
 
     public ProductDTO(Product entity) {
