@@ -10,8 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 public class ClientService {
 
@@ -31,15 +29,27 @@ public class ClientService {
         return repository.findAll(pageable).map(x -> mapper.toDto(x));
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     public ClientDTO insert(ClientDTO dto) {
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException();
+        } else {
+            repository.deleteById(id);
+        }
     }
 
-
+    @Transactional
+    public ClientDTO update(Long id, ClientDTO dto) {
+        if (repository.existsById(id)) {
+            dto.setId(id);
+            return mapper.toDto(repository.save(mapper.toEntity(dto)));
+        } else {
+            throw new ResourceNotFoundException();
+        }
+    }
 }

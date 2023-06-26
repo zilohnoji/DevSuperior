@@ -12,11 +12,7 @@ public class ClientDTO {
     private String cpf;
     private Double income;
     private Integer children;
-
-    @NotNull(message = "Name can´t nullable")
     private String name;
-
-    @PastOrPresent(message = "Invalid date")
     private LocalDate birthDate;
 
     public ClientDTO(Long id, String cpf, Double income, Integer children,
