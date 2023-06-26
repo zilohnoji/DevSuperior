@@ -1,5 +1,6 @@
 package com.donatoordep.lesson03.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 
@@ -12,7 +13,11 @@ public class ClientDTO {
     private String cpf;
     private Double income;
     private Integer children;
+
+    @NotBlank(message = "Required data")
     private String name;
+
+    @PastOrPresent(message = "Put a valid date")
     private LocalDate birthDate;
 
     public ClientDTO(Long id, String cpf, Double income, Integer children,

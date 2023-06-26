@@ -2,6 +2,7 @@ package com.donatoordep.lesson03.controllers;
 
 import com.donatoordep.lesson03.dto.ClientDTO;
 import com.donatoordep.lesson03.services.ClientService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,7 @@ public class ClientController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ClientDTO> insert(@RequestBody ClientDTO dto) {
+    public ResponseEntity<ClientDTO> insert(@Valid @RequestBody ClientDTO dto) {
         ClientDTO objCreated = service.insert(dto);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(objCreated.getId()).toUri()).body(objCreated);
@@ -46,7 +47,7 @@ public class ClientController {
 
     @PutMapping(path = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ClientDTO> update(@PathVariable(name = "id") Long id, @RequestBody ClientDTO dto) {
+    public ResponseEntity<ClientDTO> update(@PathVariable(name = "id") Long id, @Valid @RequestBody ClientDTO dto) {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
 

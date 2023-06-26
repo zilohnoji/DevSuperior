@@ -1,4 +1,4 @@
-package com.donatoordep.lesson03.services.exceptions;
+package com.donatoordep.lesson03.dto;
 
 import java.time.Instant;
 
