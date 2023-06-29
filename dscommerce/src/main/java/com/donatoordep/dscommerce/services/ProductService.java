@@ -47,6 +47,11 @@ public class ProductService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public Page<ProductDTO> findByName(String name, Pageable pageable) {
+        return repository.searchByName(name, pageable).map(ProductDTO::new);
+    }
+
     @Transactional(readOnly = false, propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
         if (!repository.existsById(id)) {
@@ -54,7 +59,7 @@ public class ProductService {
         } else {
             try {
                 repository.deleteById(id);
-            } catch (DataIntegrityViolationException e){
+            } catch (DataIntegrityViolationException e) {
                 throw new DatabaseViolationReferentialException();
             }
         }

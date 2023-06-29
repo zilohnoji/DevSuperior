@@ -26,6 +26,12 @@ public class ProductController {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
+    @GetMapping
+    public ResponseEntity<Page<ProductDTO>> findByName(
+            @RequestParam(name = "name", defaultValue = "") String name, Pageable pageable) {
+        return ResponseEntity.ok().body(service.findByName(name, pageable));
+    }
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable) {
         return ResponseEntity.ok().body(service.findAll(pageable));
