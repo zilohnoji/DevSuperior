@@ -5,8 +5,8 @@ import java.time.LocalDate;
 public class SaleMinDTO {
 
     private Long id;
-    private Double amount;
     private LocalDate date;
+    private Double amount;
     private String sellerName;
 
     public SaleMinDTO() {
