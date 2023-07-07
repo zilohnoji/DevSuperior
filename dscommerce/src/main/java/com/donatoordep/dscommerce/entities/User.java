@@ -1,16 +1,15 @@
 package com.donatoordep.dscommerce.entities;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "tb_user")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +30,11 @@ public class User {
     @Column(nullable = false, length = 80, unique = false)
     private String password;
 
-    private String[] roles;
+    @ManyToMany
+    @JoinTable(name = "tb_user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "client")
     private List<Order> orders = new ArrayList<>();
@@ -40,14 +43,21 @@ public class User {
     }
 
     public User(Long id, String name, String email, String phone, LocalDate birthDate,
-                String password, String[] roles) {
+                String password) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.birthDate = birthDate;
         this.password = password;
-        this.roles = roles;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    public boolean hasRole(String roleName) {
+        return roles.stream().anyMatch(role -> role.getAuthority().equals(roleName));
     }
 
     public List<Order> getOrders() {
@@ -94,20 +104,51 @@ public class User {
         this.birthDate = birthDate;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public String[] getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(String[] roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     @Override
@@ -115,29 +156,11 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) &&
-                Objects.equals(email, user.email) && Objects.equals(phone, user.phone) &&
-                Objects.equals(birthDate, user.birthDate) && Objects.equals(password, user.password)
-                && Arrays.equals(roles, user.roles);
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(phone, user.phone) && Objects.equals(birthDate, user.birthDate) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles) && Objects.equals(orders, user.orders);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, name, email, phone, birthDate, password);
-        result = 31 * result + Arrays.hashCode(roles);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", cellphone='" + phone + '\'' +
-                ", birthDate=" + birthDate +
-                ", password='" + password + '\'' +
-                ", roles=" + Arrays.toString(roles) +
-                '}';
+        return Objects.hash(id, name, email, phone, birthDate, password, roles, orders);
     }
 }
