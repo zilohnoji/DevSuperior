@@ -18,7 +18,7 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, length = 10, unique = false)
+    @Column(nullable = true, length = 10, unique = false)
     private Double price;
 
     @Column(nullable = true, length = 255, unique = false)

@@ -18,15 +18,11 @@ public class ProductDTO {
     private String name;
 
     @Size(min = 10, message = "Minimum size is 10")
-    @NotBlank(message = "Parameter required")
     private String description;
 
     @Positive(message = "Put a positive value")
     private Double price;
     private String imgUrl;
-
-    public ProductDTO(){
-    }
 
     public ProductDTO(Product entity) {
         id = entity.getId();
