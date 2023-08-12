@@ -1,13 +1,17 @@
 package com.donatoordep.dscommerce.services;
 
+import com.donatoordep.dscommerce.dto.UserDTO;
 import com.donatoordep.dscommerce.entities.Role;
 import com.donatoordep.dscommerce.entities.User;
 import com.donatoordep.dscommerce.projections.UserDetailsProjection;
 import com.donatoordep.dscommerce.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,5 +37,20 @@ public class UserService implements UserDetailsService {
         result.forEach(obj -> user.addRole(new Role(obj.getRoleId(), obj.getAuthority())));
 
         return user;
+    }
+
+    protected User authenticated() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
+            String username = jwtPrincipal.getClaim("username");
+            return repository.findByEmail(username).get();
+        } catch (Exception exception) {
+            throw new UsernameNotFoundException(exception.getMessage());
+        }
+    }
+
+    public UserDTO me(){
+        return new UserDTO(authenticated());
     }
 }

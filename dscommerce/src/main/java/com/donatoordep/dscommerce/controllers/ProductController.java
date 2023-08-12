@@ -47,11 +47,13 @@ public class ProductController {
                 .buildAndExpand(objCreated.getId()).toUri()).body(objCreated);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProductDTO> update(@PathVariable(name = "id") Long id, @Valid @RequestBody ProductDTO dto) {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable(name = "id") Long id) {
         service.delete(id);
