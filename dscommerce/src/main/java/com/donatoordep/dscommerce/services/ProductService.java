@@ -1,6 +1,7 @@
 package com.donatoordep.dscommerce.services;
 
 import com.donatoordep.dscommerce.dto.ProductDTO;
+import com.donatoordep.dscommerce.dto.ProductMinDTO;
 import com.donatoordep.dscommerce.mapper.ProductMapper;
 import com.donatoordep.dscommerce.repositories.ProductRepository;
 import com.donatoordep.dscommerce.services.exceptions.DatabaseViolationReferentialException;
@@ -29,8 +30,8 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable).map(ProductDTO::new);
+    public Page<ProductMinDTO> findAll(Pageable pageable) {
+        return repository.findAll(pageable).map(ProductMinDTO::new);
     }
 
     @Transactional(readOnly = false)
