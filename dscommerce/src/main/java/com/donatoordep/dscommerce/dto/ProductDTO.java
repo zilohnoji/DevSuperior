@@ -1,11 +1,10 @@
 package com.donatoordep.dscommerce.dto;
 
 import com.donatoordep.dscommerce.entities.Product;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ProductDTO {
@@ -24,8 +23,18 @@ public class ProductDTO {
     private Double price;
     private String imgUrl;
 
-    public ProductDTO() {
+    @NotEmpty(message = "Should have minimum one category")
+    private List<CategoryDTO> categories = new ArrayList<>();
 
+    public ProductDTO() {
+    }
+
+    public ProductDTO(Long id, @NotNull(message = "Parameter not null") String name, String description, Double price, String imgUrl) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imgUrl = imgUrl;
     }
 
     public ProductDTO(Product entity) {
@@ -34,10 +43,15 @@ public class ProductDTO {
         description = entity.getDescription();
         price = entity.getPrice();
         imgUrl = entity.getImgUrl();
+        entity.getCategories().forEach(cat -> categories.add(new CategoryDTO(cat)));
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<CategoryDTO> getCategories() {
+        return categories;
     }
 
     public void setName(String name) {

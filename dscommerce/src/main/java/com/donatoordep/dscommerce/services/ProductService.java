@@ -2,6 +2,8 @@ package com.donatoordep.dscommerce.services;
 
 import com.donatoordep.dscommerce.dto.ProductDTO;
 import com.donatoordep.dscommerce.dto.ProductMinDTO;
+import com.donatoordep.dscommerce.entities.Category;
+import com.donatoordep.dscommerce.entities.Product;
 import com.donatoordep.dscommerce.mapper.ProductMapper;
 import com.donatoordep.dscommerce.repositories.ProductRepository;
 import com.donatoordep.dscommerce.services.exceptions.DatabaseViolationReferentialException;
@@ -36,7 +38,10 @@ public class ProductService {
 
     @Transactional(readOnly = false)
     public ProductDTO insert(ProductDTO dto) {
-        return mapper.toDto(repository.save(mapper.toEntity(dto)));
+        Product entity = new Product();
+        entity = repository.save(entity);
+        copyToEntity(dto, entity);
+        return new ProductDTO(entity);
     }
 
     @Transactional(readOnly = false)
@@ -64,5 +69,14 @@ public class ProductService {
                 throw new DatabaseViolationReferentialException();
             }
         }
+    }
+
+    private void copyToEntity(ProductDTO dto, Product entity){
+        entity.setDescription(dto.getDescription());
+        entity.setName(dto.getName());
+        entity.setPrice(dto.getPrice());
+        entity.setImgUrl(dto.getImgUrl());
+        entity.getCategories().clear();
+        dto.getCategories().forEach(cat -> entity.getCategories().add(new Category(cat.getId())));
     }
 }
