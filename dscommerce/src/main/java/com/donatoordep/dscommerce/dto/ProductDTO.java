@@ -24,12 +24,36 @@ public class ProductDTO {
     private Double price;
     private String imgUrl;
 
+    public ProductDTO() {
+
+    }
+
     public ProductDTO(Product entity) {
         id = entity.getId();
         name = entity.getName();
         description = entity.getDescription();
         price = entity.getPrice();
         imgUrl = entity.getImgUrl();
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public String getName() {
