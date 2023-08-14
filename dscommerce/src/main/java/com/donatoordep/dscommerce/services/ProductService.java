@@ -39,8 +39,8 @@ public class ProductService {
     @Transactional(readOnly = false)
     public ProductDTO insert(ProductDTO dto) {
         Product entity = new Product();
-        entity = repository.save(entity);
         copyToEntity(dto, entity);
+        entity = repository.save(entity);
         return new ProductDTO(entity);
     }
 
