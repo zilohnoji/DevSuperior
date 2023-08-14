@@ -3,6 +3,7 @@ package com.donatoordep.dscommerce.controllers.handlers;
 import com.donatoordep.dscommerce.dto.ValidationError;
 import com.donatoordep.dscommerce.services.exceptions.CustomizedException;
 import com.donatoordep.dscommerce.services.exceptions.DatabaseViolationReferentialException;
+import com.donatoordep.dscommerce.services.exceptions.ForbiddenException;
 import com.donatoordep.dscommerce.services.exceptions.NotFoundResourceException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -42,5 +43,13 @@ public class ControllerExceptionHandler {
         e.getBindingResult().getFieldErrors().forEach(x -> err.addError(x.getField(), x.getDefaultMessage()));
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<CustomizedException> forbidden(
+            ForbiddenException e, HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new CustomizedException(
+                Instant.now(), HttpStatus.FORBIDDEN.value(), e.getMessage(), request.getRequestURI()));
     }
 }

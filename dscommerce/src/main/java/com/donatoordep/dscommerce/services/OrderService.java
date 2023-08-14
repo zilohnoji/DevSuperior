@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -31,9 +32,14 @@ public class OrderService {
     @Autowired
     private OrderItemRepository orderItemRepository;
 
+    @Autowired
+    private AuthService authService;
+
     @Transactional(readOnly = true)
     public OrderDTO findById(Long id) {
-        return repository.findById(id).map(OrderDTO::new).orElseThrow(NotFoundResourceException::new);
+        OrderDTO order = repository.findById(id).map(OrderDTO::new).orElseThrow(NotFoundResourceException::new);
+        authService.validateSelfOrAdmin(order.getClient().getId());
+        return order;
     }
 
     @Transactional

@@ -22,7 +22,7 @@ public class OrderController {
     @Autowired
     private OrderService service;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN', 'ROLE_CLIENT')")
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderDTO> findById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok().body(service.findById(id));
