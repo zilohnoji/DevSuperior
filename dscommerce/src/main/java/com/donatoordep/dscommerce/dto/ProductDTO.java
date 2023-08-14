@@ -19,6 +19,7 @@ public class ProductDTO {
     @Size(min = 10, message = "Minimum size is 10")
     private String description;
 
+    @NotNull
     @Positive(message = "Put a positive value")
     private Double price;
     private String imgUrl;
