@@ -25,8 +25,10 @@ import com.devsuperior.dscommerce.services.ProductService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/products")
+@RequestMapping(value = ProductController.PATH)
 public class ProductController {
+
+    public static final String PATH = "/products";
 
     @Autowired
     private ProductService service;
@@ -38,7 +40,9 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductMinDTO>> findAll(@RequestParam(name = "name", defaultValue = "") String name, Pageable pageable) {
+    public ResponseEntity<Page<ProductMinDTO>> findAll(
+            @RequestParam(name = "name", defaultValue = "") String name,
+            Pageable pageable) {
         Page<ProductMinDTO> dto = service.findAll(name, pageable);
         return ResponseEntity.ok(dto);
     }

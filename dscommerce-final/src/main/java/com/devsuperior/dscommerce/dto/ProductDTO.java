@@ -15,21 +15,17 @@ import jakarta.validation.constraints.Size;
 public class ProductDTO {
 
     private Long id;
-
     @Size(min = 3, max = 80, message = "Nome precisar ter de 3 a 80 caracteres")
     @NotBlank(message = "Campo requerido")
     private String name;
-
     @Size(min = 10, message = "Descrição precisa ter no mínimo 10 caracteres")
     @NotBlank(message = "Campo requerido")
     private String description;
-
     @NotNull(message = "Campo requerido")
     @Positive(message = "O preço deve ser positivo")
     private Double price;
-
     private String imgUrl;
-
+    
     @NotEmpty(message = "Deve ter pelo menos uma categoria")
     private List<CategoryDTO> categories = new ArrayList<>();
 
@@ -48,7 +44,7 @@ public class ProductDTO {
         price = entity.getPrice();
         imgUrl = entity.getImgUrl();
         for (Category cat : entity.getCategories()) {
-            categories.add(new CategoryDTO(cat));
+        	categories.add(new CategoryDTO(cat));
         }
     }
 
@@ -72,7 +68,7 @@ public class ProductDTO {
         return imgUrl;
     }
 
-    public List<CategoryDTO> getCategories() {
-        return categories;
-    }
+	public List<CategoryDTO> getCategories() {
+		return categories;
+	}
 }
