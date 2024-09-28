@@ -1,10 +1,8 @@
 package com.devsuperior.dscommerce.entities;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
+import com.devsuperior.dscommerce.builders.entities.ProductSpecificationBuilder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,15 +16,17 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_product")
-public class Product {
+public final class Product  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
-    
+
     @Column(columnDefinition = "TEXT")
     private String description;
+
     private Double price;
     private String imgUrl;
 
@@ -39,55 +39,115 @@ public class Product {
     @OneToMany(mappedBy = "id.product")
     private Set<OrderItem> items = new HashSet<>();
 
-    public Product() {
+    private Product() {
     }
 
-    public Product(Long id, String name, String description, Double price, String imgUrl) {
+    public static class ProductBuilder implements ProductSpecificationBuilder {
+        private Product entity;
+
+        private ProductBuilder() {
+            this.reset();
+        }
+
+        public static ProductBuilder builder() {
+            return new ProductBuilder();
+        }
+
+        @Override
+        public Product build() {
+            return this.entity;
+        }
+
+        public ProductBuilder id(Long id) {
+            this.entity.setId(id);
+            return this;
+        }
+
+        public ProductBuilder imgUrl(String imgUrl) {
+            this.entity.setImgUrl(imgUrl);
+            return this;
+        }
+
+        public ProductBuilder category(Category category) {
+            this.entity.getCategories().add(category);
+            return this;
+        }
+
+        public ProductBuilder categories(Set<Category> categories) {
+            this.entity.setCategories(categories);
+            return this;
+        }
+
+        @Override
+        public ProductBuilder name(String name) {
+            this.entity.setName(name);
+            return this;
+        }
+
+        @Override
+        public ProductBuilder description(String description) {
+            this.entity.setDescription(description);
+            return this;
+        }
+
+        @Override
+        public ProductBuilder price(Double price) {
+            this.entity.setPrice(price);
+            return this;
+        }
+
+        @Override
+        public void reset() {
+            this.entity = new Product();
+        }
+    }
+
+    private void setId(Long id) {
         this.id = id;
+    }
+
+    private void setName(String name) {
         this.name = name;
+    }
+
+    private void setDescription(String description) {
         this.description = description;
+    }
+
+    private void setPrice(Double price) {
         this.price = price;
+    }
+
+    private void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    private void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
+
+    private void setItems(Set<OrderItem> items) {
+        this.items = items;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
     public String getImgUrl() {
         return imgUrl;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
     }
 
     public Set<Category> getCategories() {
@@ -99,7 +159,7 @@ public class Product {
     }
 
     public List<Order> getOrders() {
-        return items.stream().map(x -> x.getOrder()).toList();
+        return items.stream().map(OrderItem::getOrder).toList();
     }
 
     @Override

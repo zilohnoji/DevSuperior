@@ -52,7 +52,7 @@ public class ProductServiceTests {
 		
 		productName = "PlayStation 5";
 		
-		product = ProductFactory.createProduct(productName);
+		product = ProductFactory.createProductWithName(productName);
 		productDTO = new ProductDTO(product);
 		page = new PageImpl<>(List.of(product));
 		

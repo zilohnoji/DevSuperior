@@ -2,7 +2,10 @@ package com.devsuperior.dscommerce.dto;
 
 import com.devsuperior.dscommerce.entities.Category;
 
-public class CategoryDTO {
+import java.util.Collection;
+import java.util.List;
+
+public class CategoryDTO  {
 
 	private Long id;
 	private String name;

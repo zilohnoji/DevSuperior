@@ -1,5 +1,6 @@
 package com.devsuperior.dscommerce.services;
 
+import com.devsuperior.dscommerce.mappers.entities.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -40,9 +41,7 @@ public class ProductService {
 
     @Transactional
     public ProductDTO insert(ProductDTO dto) {
-        Product entity = new Product();
-        copyDtoToEntity(dto, entity);
-        entity = repository.save(entity);
+        Product entity = repository.save(ProductMapper.fromDto(dto));
         return new ProductDTO(entity);
     }
 
@@ -50,39 +49,23 @@ public class ProductService {
     public ProductDTO update(Long id, ProductDTO dto) {
         try {
             Product entity = repository.getReferenceById(id);
-            copyDtoToEntity(dto, entity);
-            entity = repository.save(entity);
+            entity = repository.save(ProductMapper.fromDto(entity.getId(), dto));
             return new ProductDTO(entity);
-        }
-        catch (EntityNotFoundException e) {
+
+        } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Recurso não encontrado");
         }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
-    	if (!repository.existsById(id)) {
-    		throw new ResourceNotFoundException("Recurso não encontrado");
-    	}
-    	try {
-            repository.deleteById(id);    		
-    	}
-        catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Falha de integridade referencial");
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Recurso não encontrado");
         }
-    }
-
-    private void copyDtoToEntity(ProductDTO dto, Product entity) {
-        entity.setName(dto.getName());
-        entity.setDescription(dto.getDescription());
-        entity.setPrice(dto.getPrice());
-        entity.setImgUrl(dto.getImgUrl());
-        
-        entity.getCategories().clear();
-        for (CategoryDTO catDto : dto.getCategories()) {
-        	Category cat = new Category();
-        	cat.setId(catDto.getId());
-        	entity.getCategories().add(cat);
+        try {
+            repository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Falha de integridade referencial");
         }
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ApplicationConfigIT {
+public abstract class ApplicationConfigIT {
 
     @Autowired
     protected MockMvc mockMvc;
