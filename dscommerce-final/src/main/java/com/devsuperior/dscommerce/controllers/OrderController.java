@@ -18,9 +18,13 @@ import com.devsuperior.dscommerce.services.OrderService;
 
 import jakarta.validation.Valid;
 
+import static com.devsuperior.dscommerce.controllers.OrderController.PATH;
+
 @RestController
-@RequestMapping(value = "/orders")
+@RequestMapping(PATH)
 public class OrderController {
+
+    public static final String PATH = "/orders";
 
     @Autowired
     private OrderService service;
@@ -31,7 +35,7 @@ public class OrderController {
         OrderDTO dto = service.findById(id);
         return ResponseEntity.ok(dto);
     }
-    
+
     @PreAuthorize("hasRole('ROLE_CLIENT')")
     @PostMapping
     public ResponseEntity<OrderDTO> insert(@Valid @RequestBody OrderDTO dto) {
@@ -39,5 +43,5 @@ public class OrderController {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
-    } 
+    }
 }

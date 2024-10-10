@@ -3,6 +3,7 @@ package com.devsuperior.dscommerce.entities;
 import jakarta.persistence.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "tb_category")
@@ -16,7 +17,7 @@ public class Category {
     @ManyToMany(mappedBy = "categories")
     private Set<Product> products = new HashSet<>();
 
-    public Category() {
+    private Category() {
     }
 
     public Category(Long id, String name) {
@@ -46,16 +47,19 @@ public class Category {
 
     @Override
     public boolean equals(Object o) {
+        if (!(o instanceof Category category)) return false;
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Category category = (Category) o;
-
-        return Objects.equals(id, category.id);
+        return Objects.equals(category.id, this.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        AtomicInteger result = new AtomicInteger(Long.hashCode(this.id));
+
+        this.products.forEach(item -> {
+            result.set(31 * result.get() + item.hashCode());
+        });
+
+        return result.get();
     }
 }

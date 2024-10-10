@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,8 +48,33 @@ public class ProductControllerIT extends ApplicationConfigIT {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    void deleteShouldReturnNoContentWhenProductIdHasExists() throws Exception {
+        mockMvc.perform(delete(ProductController.PATH + "/1").header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isNoContent());
+    }
+
     @Nested
     class ProductControllerITFail {
+
+        @Test
+        void deleteShouldReturnNotFoundWhenProductIdNotExists() throws Exception {
+            mockMvc.perform(delete(ProductController.PATH + "/0").header("Authorization", "Bearer " + adminToken))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void deleteShouldReturnForbiddenWhenClientLogged() throws Exception {
+            mockMvc.perform(delete(ProductController.PATH + "/0").header("Authorization", "Bearer " + clientToken))
+                    .andExpect(status().isForbidden());
+        }
+
+        @Test
+        void deleteShouldReturnUnauthorizedWhenClientLogged() throws Exception {
+            mockMvc.perform(delete(ProductController.PATH + "/0").header("Authorization", "Bearer " + invalidToken))
+                    .andExpect(status().isUnauthorized());
+        }
+
         @Test
         void insertShouldReturnUnprocessableEntityWhenAdminHasLoggedAndNameIsNullable() throws Exception {
             ProductDTO requestDto = new ProductDTO(ProductFactory.createProductWithName(null));
